@@ -3,9 +3,9 @@
     <img src="./images/logo.png">
 </div>
 
-[Join the chat](https://gitter.im/sartajphp/community)
 This extension provides [SartajPHP](https://sartajphp.com/) support for 
 SartajPHP Framework, php development + IntelliSense for Visual Studio Code.
+For Discussion [Join the chat](https://gitter.im/sartajphp/community)
 
 ## Installation
 

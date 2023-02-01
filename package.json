@@ -1,0 +1,175 @@
+{
+  "name": "vscode-sartajphp-intellisense",
+  "displayName": "SartajPhp Intellisense",
+  "description": "Intellisense help for sartajphp projects.",
+  "version": "0.0.1",
+  "publisher": "sartajphp",
+  "author": "Felix Becker <felix.b@outlook.com>",
+  "license": "MIT",
+  "private": true,
+  "preview": false,
+  "engines": {
+    "vscode": "^1.74.0",
+    "node": "^v18.13.0"
+  },
+  "keywords": [
+    "sartajphp",
+    "php",
+    "intellisense",
+    "autocompletion",
+    "help",
+    "refactor"
+  ],
+  "categories": [
+    "Programming Languages"
+  ],
+  "icon": "images/logo.png",
+  "galleryBanner": {
+    "color": "#6682BA",
+    "theme": "dark"
+  },
+  "activationEvents": [
+    "onLanguage:php",
+    "workspaceContains:**/*.php",
+    "onCommand:sphp-runner.run"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "sphp-runner.run",
+        "title": "Run SartajPHP",
+        "icon": "$(play)"
+      },
+      {
+        "command": "sphp-runner.stop",
+        "title": "Stop SartajPHP",
+        "icon": "$(debug-stop)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "sphp-runner.run",
+        "key": "ctrl+alt+r"
+      },
+      {
+        "command": "sphp-runner.stop",
+        "key": "ctrl+alt+s"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "when": "!inOutput",
+          "command": "sphp-runner.run",
+          "group": "navigation"
+        },
+        {
+          "when": "inOutput",
+          "command": "sphp-runner.stop",
+          "group": "stop-code-run"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "when": "!sphp-runner.codeRunning",
+          "command": "sphp-runner.run",
+          "group": "navigation"
+        }
+      ],
+      "editor/title": [
+        {
+          "when": "sphp-runner.codeRunning",
+          "command": "sphp-runner.stop",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "!explorerResourceIsFolder",
+          "command": "sphp-runner.run",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "SartajPHP IntelliSense",
+      "properties": {
+        "php.memoryLimit": {
+          "type": "string",
+          "default": "4095M",
+          "description": "The memory limit of the php language server. [Number][K|M|G]. Use '-1' to allow unlimited use of the RAM (default is 4G).",
+          "pattern": "^\\d+[KMG]?$"
+        },
+        "php.executablePath": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "default": null,
+          "description": "The path to a PHP 7+ executable."
+        },
+        "php-intellisense.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Traces the communication between VSCode and the intellisense language server.",
+          "scope": "window"
+        }
+      }
+    }
+  },
+  "homepage": "https://github.com/sartaj-singh/vscode-sartajphp-intellisense/blob/master/README.md",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sartaj-singh/vscode-sartajphp-intellisense.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sartaj-singh/vscode-sartajphp-intellisense/issues",
+    "email": "sartaj@sartajsingh.com"
+  },
+  "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/semver": "^7.3.10",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "@vscode/test-electron": "^2.2.0",
+    "@vscode/vsce": "^2.9.1",
+    "eslint": "^8.28.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.1.0",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "applicationinsights": "^0.19.0",
+    "execa": "5.1.1",
+    "semver": "^7.3.7",
+    "vscode-languageclient": "^7.0.0"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Workspace level overrides to php.executablePath and php.memoryLimit cannot be provided until workspace is trusted.",
+      "restrictedConfigurations": [
+        "php.executablePath",
+        "php.memoryLimit"
+      ]
+    }
+  }
+}

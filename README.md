@@ -2,8 +2,7 @@
 <div align="center">
     <img src="./images/logo.png">
 </div>
-[![Join the chat at https://gitter.im/sartajphp/community](https://badges.gitter.im/sartajphp/community.svg)](https://gitter.im/sartajphp/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-
+Join the chat at https://gitter.im/sartajphp/community 
 This extension provides [SartajPHP](https://sartajphp.com/) support for 
 SartajPHP Framework, php development + IntelliSense for Visual Studio Code.
 

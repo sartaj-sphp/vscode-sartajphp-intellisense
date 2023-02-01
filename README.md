@@ -9,6 +9,12 @@ For Discussion [Join the chat](https://gitter.im/sartajphp/community)
 
 ## Installation
 
+Add File Association for app, use vs code menu file->preferences->settings and search. 
+"files.associations": {
+        "*.app": "php",
+        "*.front": "html",
+        "*.sphp": "json"
+    }
 You need at least PHP 7.4 installed for the extension to work. You can either add it to your PATH or set the `php.executablePath` setting.
 
 **Note: PHP 8.0 does work, PHP 8.1 support is work in progress.**

@@ -21,7 +21,21 @@ You need at least PHP 7.4 installed for the extension to work. You can either ad
 
 I recommend to disable VS Code's built-in PHP IntelliSense by setting `php.suggest.basic` to `false` to avoid duplicate suggestions.
 
-## Features
+## Todo
+
+- SartajPHP Auto Complete Intellisense - Done
+- PHP Auto Complete Intellisense - Done 
+- Run DeskApp in SphpServer - Done
+- Run Server App - Done
+- Run Console App - Done
+- Add SphpServer Support - Done
+- Run WebApp in browser
+- Run App Events under cursor
+- Identify TempFile Support
+- Master Designer Support
+- New Project Generator
+
+
 
 ### Completion
 
@@ -56,17 +70,6 @@ I recommend to disable VS Code's built-in PHP IntelliSense by setting `php.sugge
 ### Column-accurate error reporting
 
 ![Error reporting demo](images/publishDiagnostics.png)
-
-
-## Todo
-
-- Run WebApp in browser
-- Run App Events under cursor
-- Run DeskApp in SphpServer
-- Run Server App
-- Identify TempFile Support
-- Master Designer Support
-- New Project Generator
 
 
 ## Credits

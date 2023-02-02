@@ -2,7 +2,7 @@
   "name": "vscode-sartajphp-intellisense",
   "displayName": "SartajPhp Intellisense",
   "description": "Intellisense help for sartajphp projects.",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "sartajphp",
   "author": "Felix Becker <felix.b@outlook.com>",
   "license": "MIT",
@@ -101,10 +101,18 @@
           "description": "The memory limit of the php language server. [Number][K|M|G]. Use '-1' to allow unlimited use of the RAM (default is 4G).",
           "pattern": "^\\d+[KMG]?$"
         },
+        "php.sphpExecutablePath": {
+          "type": [
+            "string",
+            null
+          ],
+          "default": null,
+          "description": "The path Sphp Server executable."
+        },
         "php.executablePath": {
           "type": [
             "string",
-            "null"
+            null
           ],
           "default": null,
           "description": "The path to a PHP 7+ executable."

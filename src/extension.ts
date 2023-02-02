@@ -18,7 +18,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         console.log(' nnnn ');
     }
     */
-    const codeManager = new CodeManager();
+    const conf = vscode.workspace.getConfiguration('php');
+    const executablePath =
+        conf.get<string>('executablePath') ||
+        conf.get<string>('validate.executablePath') ||
+        (process.platform === 'win32' ? 'php.exe' : 'php');
+    const sphpExecutablePath =
+    conf.get<string>('sphpExecutablePath') ||
+    (process.platform === 'win32' ? 'sphpdesk.exe' : 'sphpdesk');
+
+    const codeManager = new CodeManager(executablePath,sphpExecutablePath);
     vscode.window.onDidCloseTerminal(() => {
         codeManager.onDidCloseTerminal();
     });
@@ -35,11 +44,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     context.subscriptions.push(stop);
     context.subscriptions.push(codeManager);
 
-    const conf = vscode.workspace.getConfiguration('php');
-    const executablePath =
-        conf.get<string>('executablePath') ||
-        conf.get<string>('validate.executablePath') ||
-        (process.platform === 'win32' ? 'php.exe' : 'php');
 
     const memoryLimit = conf.get<string>('memoryLimit') || '4095M';
 

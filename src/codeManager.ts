@@ -23,10 +23,14 @@ export class CodeManager implements vscode.Disposable {
     private _workspaceFolder: string;
     private _config: vscode.WorkspaceConfiguration;
     private _appInsightsClient: AppInsightsClient;
+    private _executablePath: string;
+    private _sphpExecutablePath: string;
 
-    constructor() {
+    constructor(executablePath:string,sphpExecutablePath:string) {
         //this._outputChannel = vscode.window.createOutputChannel("Code");
         this._terminal = null!;
+        this._executablePath = executablePath;
+        this._sphpExecutablePath = sphpExecutablePath;
         this._appInsightsClient = new AppInsightsClient();
     }
 
@@ -135,16 +139,39 @@ export class CodeManager implements vscode.Disposable {
     }
 
     private executeCommand() {
-        let command:string = "php -f " + this._cwd + "/start.php -- --ctrl index";
+        let command:string = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
         //check sphp file exist
         if(fs.existsSync(this._cwd + "/app.sphp")){
+            let sphpfile = JSON.parse(fs.readFileSync(this._cwd + "/app.sphp").toString());
             //var ppath = (process.platform == 'darwin' ? 'sphpserver-mac' : process.platform == 'win32' ? 'sphpserver-win.exe' : 'sphpserver-linux');
             //var bpath = path.resolve(path.dirname(require.main!.filename) + "/../"); 
             //command = bpath + "/vendor/sartajphp/sartajphp/res/sphpserver/" + ppath + " " + this._cwd + "/sapp.sphp";
-            command = "php -f " + this._cwd + "/start.php -- --ctrl index";
-            //command = "sphpdesk --proj " + this._cwd;
+            //command = "php -f " + this._cwd + "/start.php -- --ctrl index";
+            if(sphpfile["type"] !== undefined){
+                switch(sphpfile["type"]){
+                    case "srvapp":{
+                        command = this._sphpExecutablePath + " --proj " + this._cwd ;
+                        break;
+                    } 
+                    case "deskapp" :{
+                        command = this._sphpExecutablePath + " " + this._cwd + "/app.sphp";
+                        break;
+                    }
+                    case "consoleapp" :{
+                        command = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
+                        break;
+                    }
+                    default: {
+                        command = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
+                        break;
+                    }
+                }
+
+            }else{
+                command = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
+            }
         }else{
-            command = "php -f " + this._cwd + "/start.php -- --ctrl index";
+            command = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
         }
         this.executeCommandInTerminal(command);
         //this.executeCommandInOutputChannel(executor, appendFile);

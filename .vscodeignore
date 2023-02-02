@@ -17,3 +17,4 @@ vendor/sartajphp/sartajphp/**
 !vendor/sartajphp/sartajphp/res/Score/SphpDoc
 vendor/bin/**
 **/.DS_Store
+readme.txt

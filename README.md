@@ -12,7 +12,7 @@ For Discussion [Join the chat](https://gitter.im/sartajphp/community)
 Add File Association for app, use vs code menu file->preferences->settings and search. 
 "files.associations": {
         "*.app": "php",
-        "*.front": "html",
+        "*.front": "php",
         "*.sphp": "json"
     }
 You need at least PHP 7.4 installed for the extension to work. You can either add it to your PATH or set the `php.executablePath` setting.

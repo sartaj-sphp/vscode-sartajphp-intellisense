@@ -5,3 +5,4 @@ node_modules
 *.vsix
 vendor
 .DS_Store
+readme.txt

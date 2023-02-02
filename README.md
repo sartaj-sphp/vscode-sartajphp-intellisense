@@ -21,6 +21,11 @@ You need at least PHP 7.4 installed for the extension to work. You can either ad
 
 I recommend to disable VS Code's built-in PHP IntelliSense by setting `php.suggest.basic` to `false` to avoid duplicate suggestions.
 
+## Key Binding
+
+Run:- F7
+Stop:- Ctrl+Alt+s
+
 ## Todo
 
 - SartajPHP Auto Complete Intellisense - Done

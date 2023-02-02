@@ -49,7 +49,7 @@
     "keybindings": [
       {
         "command": "sphp-runner.run",
-        "key": "ctrl+alt+r"
+        "key": "f7"
       },
       {
         "command": "sphp-runner.stop",

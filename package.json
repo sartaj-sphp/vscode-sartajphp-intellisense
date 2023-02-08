@@ -2,7 +2,7 @@
   "name": "vscode-sartajphp-intellisense",
   "displayName": "SartajPhp Intellisense",
   "description": "Intellisense help for sartajphp projects.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "publisher": "sartajphp",
   "author": "Felix Becker <felix.b@outlook.com>",
   "license": "MIT",
@@ -31,7 +31,9 @@
   "activationEvents": [
     "onLanguage:php",
     "workspaceContains:**/*.php",
-    "onCommand:sphp-runner.run"
+    "onCommand:sphp-runner.run",
+    "onCommand:sphp-proj.create",
+    "onCommand:sphp-proj.dist"
   ],
   "contributes": {
     "commands": [
@@ -44,6 +46,14 @@
         "command": "sphp-runner.stop",
         "title": "Stop SartajPHP",
         "icon": "$(debug-stop)"
+      },
+      {
+        "command": "sphp-proj.create",
+        "title": "SartajPHP: Create"
+      },
+      {
+        "command": "sphp-proj.dist",
+        "title": "SartajPHP: Dist Sphp App"
       }
     ],
     "keybindings": [

@@ -16,5 +16,13 @@ vendor/jetbrains/phpstorm-stubs/**
 vendor/sartajphp/sartajphp/**
 !vendor/sartajphp/sartajphp/res/Score/SphpDoc
 vendor/bin/**
+vendor/**/*.jpeg
+vendor/**/*.jpg
+vendor/**/*.png
+vendor/**/*.gif
+vendor/**/*.ico
+vendor/**/*.css
+vendor/**/*.js
+
 **/.DS_Store
 readme.txt

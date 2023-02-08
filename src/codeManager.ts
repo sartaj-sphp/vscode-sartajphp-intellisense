@@ -3,8 +3,10 @@ import * as fs from "fs";
 import * as os from "os";
 //import { basename, dirname, extname, join } from "path";
 import { extname } from "path";
+import { spawn } from 'child_process';
 import * as vscode from "vscode";
 import { AppInsightsClient } from "./appInsightsClient";
+import { LanguageClient } from 'vscode-languageclient/node';
 
 //const path = require('path');
 const TMPDIR = os.tmpdir();
@@ -25,13 +27,19 @@ export class CodeManager implements vscode.Disposable {
     private _appInsightsClient: AppInsightsClient;
     private _executablePath: string;
     private _sphpExecutablePath: string;
+    private _resPath: string;
+    //private _context: vscode.ExtensionContext;
+    private _client: LanguageClient;
 
-    constructor(executablePath:string,sphpExecutablePath:string) {
+    constructor(contx: vscode.ExtensionContext,resPath:string, executablePath:string,sphpExecutablePath:string) {
         //this._outputChannel = vscode.window.createOutputChannel("Code");
         this._terminal = null!;
         this._executablePath = executablePath;
         this._sphpExecutablePath = sphpExecutablePath;
+        this._resPath = resPath;
+        //this._context = contx;
         this._appInsightsClient = new AppInsightsClient();
+        this.initialize();
     }
 
     public onDidCloseTerminal(): void {
@@ -57,14 +65,50 @@ export class CodeManager implements vscode.Disposable {
             }
         }
 
-        this.initialize();
-
         const fileExtension = extname(this._document.fileName);
         //vscode.window.showInformationMessage("run " + fileExtension);
 
         this.getCodeFileAndExecute(fileExtension);
     }
+    
+    public projCreate(){
+        if(!fs.existsSync(this._cwd + "/start.php")){
+            this.runPhpScript(this._executablePath, ['-f',this._resPath + "/classes/scripts/proj_create.php",'--',this._workspaceFolder]);
+            vscode.window.showInformationMessage("Project Created!");
+        }else{
+            vscode.window.showInformationMessage("Please Open a Empty Folder!");
+        }
+    }
 
+    public projDist(){
+        if(fs.existsSync(this._cwd + "/start.php")){
+            this.runPhpScript(this._executablePath, ['-f',this._resPath + "/classes/scripts/proj_dist.php",'--',this._workspaceFolder]);
+            vscode.window.showInformationMessage("Done Phar Package!");
+        }else{
+            vscode.window.showInformationMessage("Not a SartajPHP Project!");
+        }
+    }
+
+    private async runPhpScript(filepath:string,param:Array<string>){
+        const childProcess = spawn(filepath, param);
+        childProcess.stderr.on('data', (chunk: Buffer) => {
+            const str = chunk.toString();
+            console.log('SartajPHP Lib Error:', str);
+            this._client.outputChannel.appendLine(str);
+        });
+         childProcess.stdout.on('data', (chunk: Buffer) => {
+             console.log('SartajPHP Lib:', chunk + '');
+         });
+        childProcess.on('exit', (code, signal) => {
+            this._client.outputChannel.appendLine(
+                `SartajPHP Lib ` + (signal ? `from signal ${signal}` : `with exit code ${code}`)
+            );
+            if (code !== 0) {
+                this._client.outputChannel.show();
+            }
+        });
+
+    }
 
     public stop(): void {
         this._appInsightsClient.sendEvent("stop");
@@ -128,7 +172,7 @@ export class CodeManager implements vscode.Disposable {
             this._isTmpFile = false;
             //this._codeFile = this._document.fileName;
                 return vscode.workspace.saveAll().then(() => {
-                    this.executeCommand();
+                    this.executeCommand(fileExtension);
                 });
 /*
                 return this._document.save().then(() => {
@@ -138,10 +182,10 @@ export class CodeManager implements vscode.Disposable {
             }
     }
 
-    private executeCommand() {
+    private executeCommand(fileExtension: string) {
         let command:string = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
         //check sphp file exist
-        if(fs.existsSync(this._cwd + "/app.sphp")){
+        if(fs.existsSync(this._cwd + "/app.sphp") && fileExtension !== ".phar"){
             let sphpfile = JSON.parse(fs.readFileSync(this._cwd + "/app.sphp").toString());
             //var ppath = (process.platform == 'darwin' ? 'sphpserver-mac' : process.platform == 'win32' ? 'sphpserver-win.exe' : 'sphpserver-linux');
             //var bpath = path.resolve(path.dirname(require.main!.filename) + "/../"); 
@@ -170,6 +214,8 @@ export class CodeManager implements vscode.Disposable {
             }else{
                 command = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
             }
+        }else if(fileExtension === ".phar"){
+            command = this._sphpExecutablePath + ' ' + this._document.fileName ;
         }else{
             command = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
         }

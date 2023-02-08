@@ -272,12 +272,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/JetBrains/phpstorm-stubs.git",
-                "reference": "c1d72aec3a5fbdb3d4568076d03644c9439b78cb"
+                "reference": "9b88ae4d55f56ca39b12e983f88e6034d4d34baa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/c1d72aec3a5fbdb3d4568076d03644c9439b78cb",
-                "reference": "c1d72aec3a5fbdb3d4568076d03644c9439b78cb",
+                "url": "https://api.github.com/repos/JetBrains/phpstorm-stubs/zipball/9b88ae4d55f56ca39b12e983f88e6034d4d34baa",
+                "reference": "9b88ae4d55f56ca39b12e983f88e6034d4d34baa",
                 "shasum": ""
             },
             "require-dev": {
@@ -285,7 +285,7 @@
                 "nikic/php-parser": "@stable",
                 "php": "^8.0",
                 "phpdocumentor/reflection-docblock": "@stable",
-                "phpunit/phpunit": "@stable"
+                "phpunit/phpunit": "^9.6"
             },
             "default-branch": true,
             "type": "library",
@@ -313,7 +313,7 @@
             "support": {
                 "source": "https://github.com/JetBrains/phpstorm-stubs/tree/master"
             },
-            "time": "2023-01-30T21:37:54+00:00"
+            "time": "2023-02-06T08:09:37+00:00"
         },
         {
             "name": "microsoft/tolerant-php-parser",
@@ -753,12 +753,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sartaj-singh/SartajPHP-Framework.git",
-                "reference": "1db282aa2885f50d05f70e21ff42b2c39f617b3f"
+                "reference": "9715855661befbbeb1dbdd7a561c0b02344eefb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sartaj-singh/SartajPHP-Framework/zipball/1db282aa2885f50d05f70e21ff42b2c39f617b3f",
-                "reference": "1db282aa2885f50d05f70e21ff42b2c39f617b3f",
+                "url": "https://api.github.com/repos/sartaj-singh/SartajPHP-Framework/zipball/9715855661befbbeb1dbdd7a561c0b02344eefb2",
+                "reference": "9715855661befbbeb1dbdd7a561c0b02344eefb2",
                 "shasum": ""
             },
             "require": {
@@ -792,7 +792,7 @@
                 "issues": "https://github.com/sartaj-singh/SartajPHP-Framework/issues",
                 "source": "https://github.com/sartaj-singh/SartajPHP-Framework/tree/master"
             },
-            "time": "2023-01-30T23:20:52+00:00"
+            "time": "2023-02-08T03:34:50+00:00"
         },
         {
             "name": "webmozart/assert",

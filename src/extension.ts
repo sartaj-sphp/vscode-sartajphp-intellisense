@@ -26,8 +26,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     const sphpExecutablePath =
     conf.get<string>('sphpExecutablePath') ||
     (process.platform === 'win32' ? 'sphpdesk.exe' : 'sphpdesk');
-
-    const codeManager = new CodeManager(executablePath,sphpExecutablePath);
+    const resPath = context.asAbsolutePath(
+        path.join('vendor', 'sartajphp', 'sartajphp', 'res')
+    );
+    const codeManager = new CodeManager(context,resPath,executablePath,sphpExecutablePath);
     vscode.window.onDidCloseTerminal(() => {
         codeManager.onDidCloseTerminal();
     });
@@ -40,8 +42,18 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         codeManager.stop();
     });
 
+    const projCreate = vscode.commands.registerCommand("sphp-proj.create", () => {
+        codeManager.projCreate();
+    });
+
+    const projDist = vscode.commands.registerCommand("sphp-proj.dist", () => {
+        codeManager.projDist();
+    });
+
     context.subscriptions.push(run);
     context.subscriptions.push(stop);
+    context.subscriptions.push(projCreate);
+    context.subscriptions.push(projDist);
     context.subscriptions.push(codeManager);
 
 
@@ -170,3 +182,4 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     // client can be deactivated on extension deactivation
     context.subscriptions.push(disposable);
 }
+

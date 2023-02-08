@@ -15,6 +15,7 @@ vendor/jetbrains/phpstorm-stubs/**
 !vendor/jetbrains/phpstorm-stubs/PhpStormStubsMap.php
 vendor/sartajphp/sartajphp/**
 !vendor/sartajphp/sartajphp/res/Score/SphpDoc
+!vendor/sartajphp/sartajphp/res/classes/scripts
 vendor/bin/**
 vendor/**/*.jpeg
 vendor/**/*.jpg

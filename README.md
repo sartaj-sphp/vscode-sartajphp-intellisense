@@ -20,7 +20,7 @@ you also need to setup php and sphpserver executeables path. Install SphpServer 
 sphpdesk npm package
 
 npm install -g sphpdesk
-
+<a href="https://www.npmjs.com/package/sphpdesk">https://www.npmjs.com/package/sphpdesk</a>
 You need at least PHP 7.4 installed for the extension to work. You can either add it to your PATH or set the `php.executablePath` setting.
 
 **Note: PHP 8.0 does work, PHP 8.1 support is work in progress.**

@@ -16,11 +16,18 @@ Add File Association for app, use vs code menu file->preferences->settings and s
         "*.sphp": "json"
     }
 
-you also need to setup php and sphpserver executeables path. Install SphpServer with
-sphpdesk npm package
+you also need to setup php and sphpserver executeables path. set sphpserver path in
+
+php.sphpExecutablePath : "up folder/..../node_modules/sphpdesk/res/sphpserver/sphpserver-win.exe" 
+
+setting to run SphpServer App.
+
+Install SphpServer with sphpdesk npm package
 
 npm install -g sphpdesk
+
 <a href="https://www.npmjs.com/package/sphpdesk">https://www.npmjs.com/package/sphpdesk</a>
+
 You need at least PHP 7.4 installed for the extension to work. You can either add it to your PATH or set the `php.executablePath` setting.
 
 **Note: PHP 8.0 does work, PHP 8.1 support is work in progress.**

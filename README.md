@@ -15,6 +15,12 @@ Add File Association for app, use vs code menu file->preferences->settings and s
         "*.front": "php",
         "*.sphp": "json"
     }
+
+you also need to setup php and sphpserver executeables path. Install SphpServer with
+sphpdesk npm package
+
+npm install -g sphpdesk
+
 You need at least PHP 7.4 installed for the extension to work. You can either add it to your PATH or set the `php.executablePath` setting.
 
 **Note: PHP 8.0 does work, PHP 8.1 support is work in progress.**
@@ -38,7 +44,9 @@ Create Phar Pacakge:- run Command SartajPHP:dist with ctrl+shift+p
 - Run DeskApp in SphpServer - Done
 - Run Server App - Done
 - Run Console App - Done
-- Add SphpServer Support - Done
+- Add SphpServer (Install Sphpdesk NPM package) Support - Done
+- Generate Phar file - Done
+- Run Phar file (Need Sphpdesk NPM package installed on machine with global flag) - Done
 - Run WebApp in browser
 - Run App Events under cursor
 - Identify TempFile Support

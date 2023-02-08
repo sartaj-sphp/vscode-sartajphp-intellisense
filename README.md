@@ -21,10 +21,15 @@ You need at least PHP 7.4 installed for the extension to work. You can either ad
 
 I recommend to disable VS Code's built-in PHP IntelliSense by setting `php.suggest.basic` to `false` to avoid duplicate suggestions.
 
-## Key Binding
+## Key Binding and Commands
 
-Run:- F7
-Stop:- Ctrl+Alt+s
+Run:- F7 , It detects settings from app.sphp if not available then run as console app
+
+Stop:- Ctrl+Alt+s Stop Running Project or use CTRL + C if running in terminal
+
+Create Project:- First open empty folder and run Command SartajPHP:create with ctrl+shift+p 
+
+Create Phar Pacakge:- run Command SartajPHP:dist with ctrl+shift+p
 
 ## Todo
 

@@ -2,7 +2,7 @@
   "name": "vscode-sartajphp-intellisense",
   "displayName": "SartajPhp Intellisense",
   "description": "Intellisense help for sartajphp projects.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "publisher": "sartajphp",
   "author": "Felix Becker <felix.b@outlook.com>",
   "license": "MIT",

@@ -5,8 +5,10 @@ import * as path from 'path';
 import * as semver from 'semver';
 import * as url from 'url';
 import * as vscode from 'vscode';
-import { LanguageClient, LanguageClientOptions, RevealOutputChannelOn, StreamInfo } from 'vscode-languageclient/node';
+import { Disposable, LanguageClient, LanguageClientOptions, RevealOutputChannelOn, StreamInfo } from 'vscode-languageclient/node';
 import { CodeManager } from "./codeManager";
+import { TreeItem } from "./treeitem";
+
 const composerJson = require('../composer.json');
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -25,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         (process.platform === 'win32' ? 'php.exe' : 'php');
     const sphpExecutablePath =
     conf.get<string>('sphpExecutablePath') ||
-    (process.platform === 'win32' ? 'sphpdesk.exe' : 'sphpdesk');
+    (process.platform === 'win32' ? 'sphpdesk' : 'sphpdesk');
     const resPath = context.asAbsolutePath(
         path.join('vendor', 'sartajphp', 'sartajphp', 'res')
     );
@@ -38,7 +40,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         codeManager.run(fileUri);
     });
 
-    const stop = vscode.commands.registerCommand("sphp-runner.stop", () => {
+    const stop:Disposable = vscode.commands.registerCommand("sphp-runner.stop", () => {
         codeManager.stop();
     });
 
@@ -50,10 +52,49 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         codeManager.projDist();
     });
 
+    const projView = vscode.commands.registerCommand("sphp-proj.view", () => {
+        codeManager.projView();
+    });
+
+    const titemClick = vscode.commands.registerCommand("sphp-item.click", (item: TreeItem) => {
+        codeManager.treeItemClick(item);
+    });
+
+    const dbv1 = vscode.commands.registerCommand("sphp-db.view", () => {
+        codeManager.dbView();
+    });
+
+    const dbv2 = vscode.commands.registerCommand("sphp-db.gen", (item:TreeItem) => {
+        codeManager.dbGen(item);
+    });
+
+    const dbv3 = vscode.commands.registerCommand("sphp-db.reload", () => {
+        codeManager.dbView();
+    });
+
+    const dbv4 = vscode.commands.registerCommand("sphp-blocks.reload", () => {
+        codeManager.genBlocksTree1(true);
+    });
+
+    
+    //future use for comp properties window
+    vscode.window.onDidChangeTextEditorSelection((d) => {
+        codeManager.fillCompProp(d);
+    });
+    
+
+    codeManager.addBlocks();
+
     context.subscriptions.push(run);
     context.subscriptions.push(stop);
     context.subscriptions.push(projCreate);
     context.subscriptions.push(projDist);
+    context.subscriptions.push(projView);
+    context.subscriptions.push(titemClick);
+    context.subscriptions.push(dbv1);
+    context.subscriptions.push(dbv2);
+    context.subscriptions.push(dbv3);
+    context.subscriptions.push(dbv4);
     context.subscriptions.push(codeManager);
 
 

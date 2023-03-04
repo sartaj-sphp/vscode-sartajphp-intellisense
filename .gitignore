@@ -6,3 +6,7 @@ node_modules
 vendor
 .DS_Store
 readme.txt
+sqlitesphp.ts
+tdataprovider.ts
+treeitem.ts
+dropprovider.ts

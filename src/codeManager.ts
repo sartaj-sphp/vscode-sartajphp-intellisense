@@ -334,7 +334,7 @@ export class CodeManager implements vscode.Disposable {
     public async fillCompProp(d: vscode.TextEditorSelectionChangeEvent){
         let editor = vscode.window.activeTextEditor;
         //ONLY FRONT FILE EXTENSION
-        if(editor && this.isFileExt(editor,'front')){
+        if(editor && this.isFileExt(editor,'.front')){
             var doc: vscode.TextDocument = d.textEditor.document;
             var str1 = doc.getText();
             var tag = this.findTag(str1,doc.offsetAt(editor.selection.active));

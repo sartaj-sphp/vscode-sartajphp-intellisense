@@ -8,8 +8,6 @@ vsc-extension-quickstart.md
 **/.eslintrc.json
 **/*.map
 **/*.ts
-images/**
-!images/logo.png
 out/test/**
 vendor/jetbrains/phpstorm-stubs/**
 !vendor/jetbrains/phpstorm-stubs/PhpStormStubsMap.php

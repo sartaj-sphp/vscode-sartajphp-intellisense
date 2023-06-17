@@ -2,7 +2,7 @@
   "name": "vscode-sartajphp-intellisense",
   "displayName": "SartajPhp Intellisense",
   "description": "Intellisense help for sartajphp projects.",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "sartajphp",
   "author": "Felix Becker <felix.b@outlook.com>",
   "license": "MIT",
@@ -75,6 +75,10 @@
       {
         "command": "sphp-proj.create",
         "title": "SartajPHP: Create"
+      },
+      {
+        "command": "sphp-proj.createcordova",
+        "title": "SartajPHP: Create Cordova App"
       },
       {
         "command": "sphp-proj.dist",

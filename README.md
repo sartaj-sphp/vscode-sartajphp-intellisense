@@ -58,7 +58,7 @@ Create Phar Pacakge:- run Command SartajPHP:dist with ctrl+shift+p
 - Run App Events under cursor
 - Identify TempFile Support
 - Master Designer Support
-- New Project Generator
+- New Project Generator Done
 
 
 

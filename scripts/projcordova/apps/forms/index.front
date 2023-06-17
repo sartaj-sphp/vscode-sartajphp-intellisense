@@ -1,0 +1,20 @@
+      <ons-list id="menu" runat="server" path="libpath/comp/bundle/onsen/SideMenu.php">
+        <ons-list-item onclick="onsen.loadPage('home.html')" tappable>
+          Home
+        </ons-list-item>
+        <ons-list-item onclick="onsen.loadPage('page2.html')" tappable>
+          Settings
+        </ons-list-item>
+        <ons-list-item onclick="onsen.loadPage('page3.html')" tappable>
+          About
+        </ons-list-item>
+      </ons-list>
+
+<ons-page id="home" runat="server" path="libpath/comp/bundle/onsen/OnsenPage.php">
+    <include id="toolbar" runat="server" funsetTempFile="apps/forms/toolbar.front" >toolbar</include>
+test body
+<div class="bottom-bar">
+  <div class="bottom-bar__line-height" style="text-align:center"> Toolbar</div>
+</div>
+
+</ons-page>

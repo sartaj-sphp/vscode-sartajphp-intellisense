@@ -1,0 +1,7 @@
+<ons-page id="page3" runat="server" path="libpath/comp/bundle/onsen/OnsenPage.php">
+<include id="toolbar" runat="server" funsetTempFile="apps/forms/toolbar.front" >toolbar</include>
+
+    <p>This is the 3 page.</p>
+
+    <ons-button id="btnpage3">Push page</ons-button>
+  </ons-page>

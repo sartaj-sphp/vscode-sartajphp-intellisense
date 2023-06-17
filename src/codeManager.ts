@@ -1,7 +1,7 @@
 "use strict";
 import * as fs from "fs";
 import * as os from "os";
-//import { basename, dirname, extname, join } from "path";
+import * as path from "path";
 import { extname } from "path";
 import { spawn } from 'child_process';
 import * as vscode from "vscode";
@@ -89,6 +89,18 @@ export class CodeManager implements vscode.Disposable {
     public projCreate() {
         if (!this.isSartajPHPProj()) {
             this.runPhpScript(this._executablePath, ['-f', this._context.asAbsolutePath("scripts/proj_create.php"), '--', this._workspaceFolder]);
+            vscode.window.showInformationMessage("Project Created!");
+        } else {
+            vscode.window.showInformationMessage("Please Open a Empty Folder!");
+        }
+    }
+
+    public async projCreateCordova() {
+        var self = this;
+        if (!this.isSartajPHPProj()) {
+            var parentfolderpath = path.dirname(this._workspaceFolder);
+            var parentfolder = path.basename(this._workspaceFolder);
+            self.runPhpScript(self._executablePath, ['-f', self._context.asAbsolutePath("scripts/proj_create_cordova.php"), '--', parentfolderpath,parentfolder]);
             vscode.window.showInformationMessage("Project Created!");
         } else {
             vscode.window.showInformationMessage("Please Open a Empty Folder!");

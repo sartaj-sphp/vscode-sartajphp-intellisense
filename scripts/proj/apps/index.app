@@ -18,6 +18,15 @@ class index extends \Sphp\tools\BasicApp{
         $this->setTempFile($this->home_front1);
     }
 
+    public function page_event_page($evtp) {
+        // send temp file to browser
+        $this->setTempFile(new TempFile(SphpBase::sphp_settings()->slib_path . '/apps/forms/contacts.php'));
+    }
+
+    public function page_event_captcha($evtp) {
+        // pass captcha event to component
+        $temp1 = new TempFile(SphpBase::sphp_settings()->slib_path . '/apps/forms/contacts.php');
+    }
     //form submit here
     public function page_submit() {
         // send temp file to browser
@@ -37,3 +46,4 @@ class index extends \Sphp\tools\BasicApp{
     }
     
 }
+

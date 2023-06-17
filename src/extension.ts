@@ -48,6 +48,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         codeManager.projCreate();
     });
 
+    const projCreateMob = vscode.commands.registerCommand("sphp-proj.createcordova", () => {
+        codeManager.projCreateCordova();
+    });
+
     const projDist = vscode.commands.registerCommand("sphp-proj.dist", () => {
         codeManager.projDist();
     });
@@ -88,6 +92,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     context.subscriptions.push(run);
     context.subscriptions.push(stop);
     context.subscriptions.push(projCreate);
+    context.subscriptions.push(projCreateMob);
     context.subscriptions.push(projDist);
     context.subscriptions.push(projView);
     context.subscriptions.push(titemClick);

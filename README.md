@@ -18,8 +18,8 @@ Add File Association for app, use vs code menu file->preferences->settings and s
 
 you also need to setup php and sphpserver executeables path. set sphpserver path in
 
-php.sphpExecutablePath : "up folder/..../node_modules/sphpdesk/res/sphpserver/sphpserver-win.exe" 
-
+php.sphpExecutablePath : "up folder/..../node_modules/sphpdesk/sphpserver/sphpserver-win.exe" 
+ or on linux it is sphpserver-linux file.
 setting to run SphpServer App.
 
 Install SphpServer with sphpdesk npm package

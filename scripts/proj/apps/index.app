@@ -7,6 +7,10 @@ class index extends \Sphp\tools\BasicApp{
         global $masterf;  
         // if not authorise then application call getWelcome() function in comp.php
         //$this->getAuthenticate("GUEST,ADMIN");
+
+        //set default DB table to deal with
+        //$this->setTableName("tbl1");
+
         $this->home_front1 = new \Sphp\tools\TempFile($this->mypath . "/forms/index_front1.front");
         // use global variable in comp.php file
         $this->setMasterFile($masterf);        
@@ -29,6 +33,20 @@ class index extends \Sphp\tools\BasicApp{
     }
     //form submit here
     public function page_submit() {
+        // set dummy error to test getCheckErr, you can watch this error in browser console in debugmode=2
+        //setErr("app1","I am dummy error");
+
+        if(! getCheckErr()){
+            //submit data to mysql database, you need to set db user pass in comp.php file
+            // $this->dbEngine->executeQueryQuick("INSERT INTO tbl1 () values()");
+            // or $this->page->insertData() will insert data automatically with use of control 
+            // dfield and dtable attributes or it can use default table of application.
+            // check app Framework folder ./res/Slib/apps/helper/AutoApp.php file 
+            //set inner html of spn2 control
+            $this->home_front1->spn2->setInnerHTML("Form Submut value = " . $this->home_front1->txtname->value);
+        }else{
+            $this->home_front1->spn2->setInnerHTML("Form Submut with error ");
+        }
         // send temp file to browser
         $this->setTempFile($this->home_front1);
     }

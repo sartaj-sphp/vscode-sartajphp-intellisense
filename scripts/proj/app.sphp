@@ -1,7 +1,7 @@
 {
     "project": "Demo",
     "type1": "srvapp,deskapp,consoleapp",
-    "type": "deskapp",
+    "type": "srvapp",
     "comment": "port 0 mean auto",
     "host": "localhost",
     "port": 0,

@@ -8,9 +8,11 @@ $db = "db1";
 $dpass = "mypass";
 
 $debugmode = 2;
+$admuser = 'admin';
+$admpass = '1234';
 
 if($basepath != ""){
-	$basepath .= "proj_folder/";
+	$basepath .= "/demo";
 }
 
 //app mail settings

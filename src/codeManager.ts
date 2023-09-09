@@ -27,7 +27,7 @@ export class CodeManager implements vscode.Disposable {
     private _runFromExplorer: boolean;
     private _document: vscode.TextDocument;
     private _workspaceFolder: string;
-    private _config: vscode.WorkspaceConfiguration;
+    //private _config: vscode.WorkspaceConfiguration;
     private _appInsightsClient: AppInsightsClient;
     private _executablePath: string;
     private _sphpExecutablePath: string;
@@ -620,6 +620,7 @@ export class CodeManager implements vscode.Disposable {
 */
 
     private changeFilePathForBashOnWindows(command: string): string {
+        /*
         if (os.platform() === "win32") {
             const windowsShell = vscode.env.shell;
             const terminalRoot = this._config.get<string>("terminalRoot");
@@ -631,13 +632,14 @@ export class CodeManager implements vscode.Disposable {
                 command = command.replace(/([A-Za-z]):\\/g, this.replacer).replace(/\\/g, "/");
             }
         }
+        */
         return command;
     }
-
+/*
     private replacer(match: string, p1: string): string {
         return `/mnt/${p1.toLowerCase()}/`;
     }
-
+*/
 
     private sendRunEvent(executor: string, runFromTerminal: boolean) {
         const properties = {

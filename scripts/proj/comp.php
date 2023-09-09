@@ -23,6 +23,8 @@ $mailPort = "26";
 
 $masterf = "temp/default/master.php";
 //$admmasterf = "temp/admin/master.php";
+//$masterf = $slibpath . "/temp/permis/master.php";
+//$mebmasterf = $slibpath . "/temp/permis/master.php";
 
 function getWelcome(){
 $page = SphpBase::page();
@@ -35,9 +37,10 @@ break;
 case "MEMBER":{
 $page->forward(getAppPath("mebhome"));
 break;
-}
-
-default:{
+}case "MEMBERT":{
+	$page->forward(getAppPath("mebhome"));
+	break;
+}default:{
 $page->forward(getAppPath("index"));
 break;
 }

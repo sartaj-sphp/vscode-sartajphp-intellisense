@@ -12,27 +12,29 @@ For Discussion [Join the chat](https://gitter.im/sartajphp/community)
 Add File Association for app, use vs code menu file->preferences->settings and search. 
 "files.associations": {
         "*.app": "php",
-        "*.front": "php",
+        "*.front": "html",
         "*.sphp": "json"
     }
 
-you also need to setup php and sphpserver executeables path. set sphpserver path in
+You may also need to install SphpDesk runtime from [Download SphpDesk](https://www.sartajphp.com/index-info-downloads.html) for some extra features like design view and run app.
+if you don't have install SphpDesk on standard path or use nodejs package sphpdesk then setup php and sphpserver executeables path. set sphpserver path in
 
-php.sphpExecutablePath : "up folder/..../node_modules/sphpdesk/sphpserver/sphpserver-win.exe" 
+php.sphpExecutablePath : "C:/sphpdesk/sphpserver/sphpserver-win.exe" 
  or on linux it is sphpserver-linux file.
 setting to run SphpServer App.
 
-Install SphpServer with sphpdesk npm package
+Install SphpServer(For run SartajPhp App in nodejs) with sphpdesk npm package
 
 npm install -g sphpdesk
 
 <a href="https://www.npmjs.com/package/sphpdesk">https://www.npmjs.com/package/sphpdesk</a>
 
-You need at least PHP 7.4 installed for the extension to work. You can either add it to your PATH or set the `php.executablePath` setting.
+Without Sphpdesk(Design View not work):-
+You need at least PHP 5.6 installed for the extension to work. You can either add it to your PATH or set the `php.executablePath` setting. Install SartajPhp Framework with composer and set start.php path to framework.
 
-**Note: PHP 8.0 does work, PHP 8.1 support is work in progress.**
+**Note: Php Autocomplete engine droped So use PHP Intelephense or any other.**
 
-I recommend to disable VS Code's built-in PHP IntelliSense by setting `php.suggest.basic` to `false` to avoid duplicate suggestions.
+I recommend to disable VS Code's built-in PHP IntelliSense by setting `php.suggest.basic` to `false` to avoid duplicate suggestions. Add res/Score/SphpDoc and res/Slib folder intelephense.environment in VS Code Settings for Autocomplete Help. 
 
 ## Key Binding and Commands
 
@@ -47,57 +49,44 @@ Create Phar Pacakge:- run Command SartajPHP:dist with ctrl+shift+p
 ## Todo
 
 - SartajPHP Auto Complete Intellisense - Done
-- PHP Auto Complete Intellisense - Done 
+- PHP Auto Complete Intellisense - Removed use other extension 
 - Run DeskApp in SphpServer - Done
 - Run Server App - Done
 - Run Console App - Done
-- Add SphpServer (Install Sphpdesk NPM package) Support - Done
+- Add SphpServer (Install Sphpdesk From sartajphp website or NPM package) Support - Done
 - Generate Phar file - Done
 - Run Phar file (Need Sphpdesk NPM package installed on machine with global flag) - Done
-- Run WebApp in browser
-- Run App Events under cursor
-- Identify TempFile Support
-- Master Designer Support
+- Run WebApp in browser - Done
+- Run App Events under cursor - Nop
+- TempFile Design Support - Done
+- TempFile Autocomplete - Done
+- Master Designer Support - Done
 - New Project Generator Done
 
 
 
-### Completion
+### Code Completion Front
 
-![Completion search demo](images/completion.gif)
+![Completion Help front file demo](images/autocomplete_front1.gif)
 
 ### Signature Help
 
-![Signature help demo](images/signatureHelp.gif)
+![Signature help demo](images/signature.gif)
 
-### Workspace symbol search
+### Code Completion Help SartajPhp App
 
-![Workspace symbol search demo](images/workspaceSymbol.gif)
+![Completion SartajPhp App demo](images/autocomplete_sartajphp.gif)
 
-### Find all References
+### Visual Designer
 
-![Find References demo](images/references.png)
+![SartajPhp Visual Designer demo](images/design_view.gif)
 
-### Go to Definition
+### Code Blocks Help
 
-![Go To Definition demo](images/definition.gif)
-
-### Hover
-
-![Hover class demo](images/hoverClass.png)
-
-![Hover parameter demo](images/hoverParam.png)
-
-### Find all symbols
-
-![Find all symbols demo](images/documentSymbol.gif)
-
-### Column-accurate error reporting
-
-![Error reporting demo](images/publishDiagnostics.png)
+![SartajPhp Code Blocks demo](images/code_blocks.gif)
 
 
 ## Credits
 
-[PHP Intellisense](https://github.com/felixfbecker/vscode-php-intellisense)
-[PHP Language Server](https://github.com/zobo/php-language-server)
+[SartajPHP Intellisense](https://www.sartajphp.com)
+[SartajPHP Website](https://www.sartajphp.com)

@@ -1,19 +1,19 @@
 "use strict";
 import * as fs from "fs";
-import * as os from "os";
+//import * as os from "os";
 import * as path from "path";
 import { extname } from "path";
 import { spawn } from 'child_process';
 import * as vscode from "vscode";
 import { AppInsightsClient } from "./appInsightsClient";
-import { LanguageClient } from 'vscode-languageclient/node';
+import { SphpServerRun } from "./sphpserverrun";
 import { TviewM } from "./tviewm";
 import { registerDrop } from "./dropprovider";
 import { TreeItem } from "./treeitem";
 //import { SqlliteSphp } from "./sqlitesphp";
 
 //const path = require('path');
-const TMPDIR = os.tmpdir();
+//const TMPDIR = os.tmpdir();
 
 export class CodeManager implements vscode.Disposable {
     //private _outputChannel: vscode.OutputChannel;
@@ -31,21 +31,35 @@ export class CodeManager implements vscode.Disposable {
     private _appInsightsClient: AppInsightsClient;
     private _executablePath: string;
     private _sphpExecutablePath: string;
+    private _sphpServerExecutablePath: string;
     //private _resPath: string;
     private _context: vscode.ExtensionContext;
-    private _client: LanguageClient;
+    private _outputerror: any;
     private _panel: vscode.WebviewPanel;
     private _panelStatus: boolean = false;
+    //for generate code blocks
+    private _tView2?: vscode.TreeView<any>;
+    private _dp2?: any;
+    // fil comp prop
+    private _tView1?: vscode.TreeView<any>;
+    private _dp1?: any;
+    // fil db view
+    private _tView3?: vscode.TreeView<any>;
+    private _dp3?: any;
+    private _sphpServer: any;
     public codeBlocks: any;
 
-    constructor(contx: vscode.ExtensionContext, resPath: string, executablePath: string, sphpExecutablePath: string) {
+    constructor(contx: vscode.ExtensionContext, resPath: string, executablePath: string, sphpExecutablePath: string, sphpServerExecutablePath: string) {
         //this._outputChannel = vscode.window.createOutputChannel("Code");
         this._terminal = null!;
         this._executablePath = executablePath;
         this._sphpExecutablePath = sphpExecutablePath;
+        this._sphpServerExecutablePath = sphpServerExecutablePath;
         //this._resPath = resPath;
         this._context = contx;
         this._appInsightsClient = new AppInsightsClient();
+        this._sphpServer = null;
+        this._outputerror = vscode.window.createOutputChannel("SartajPHP Intelligence");
         this.initialize();
     }
 
@@ -118,21 +132,27 @@ export class CodeManager implements vscode.Disposable {
         const self = this;
         if (this.isSartajPHPProj()) {
             self.runPhpScriptTimeLimit(self._executablePath, ['-f', self._context.asAbsolutePath("scripts/proj_db_view.php"), '--', self._workspaceFolder], function (str: string) {
-                const tviewM = new TviewM();
+                
                 var rows = [];
                 try{
                     rows = JSON.parse(str);
                 }catch(e){
                     vscode.window.showErrorMessage(str);
                 }
-                const db1: any = tviewM.getDbView(rows,self._context);
-                const dbView = vscode.window.createTreeView("sartajphp-db",
+                if(!self._dp3){
+                    self._dp3 = new TviewM().getDbView(rows,self._context);
+                }else{
+                    self._dp3.updateData(rows,self._context,'b'); // b for non clickable
+                }
+                if(!self._tView3){
+                    self._tView3 = vscode.window.createTreeView("sartajphp-db",
                 {
-                    treeDataProvider: db1,
+                    treeDataProvider: self._dp3,
                     canSelectMany: false,
-                    dragAndDropController: db1
+                    dragAndDropController: self._dp3
                 });
-                self._context.subscriptions.push(dbView);
+                self._context.subscriptions.push(self._tView3);
+            }
                 vscode.window.showInformationMessage("Done DB Connection!");
             });
         }
@@ -146,6 +166,219 @@ export class CodeManager implements vscode.Disposable {
             });
         }
     }
+    private async openOrFocusFile(filePath: string) {
+    try {
+        // Convert to proper URI
+        const uri = vscode.Uri.file(filePath);
+        
+        // Check if document is already open
+        const existingDoc = vscode.workspace.textDocuments.find(doc => 
+            doc.uri.fsPath === uri.fsPath
+        );
+        
+        if (existingDoc) {
+            // File is open - focus its tab
+            await vscode.window.showTextDocument(existingDoc.uri, { 
+                preview: false, 
+                preserveFocus: false 
+            });
+        } else {
+            // File not open - open it
+            await vscode.window.showTextDocument(uri, { 
+                preview: false 
+            });
+        }
+    } catch (error) {
+        vscode.window.showErrorMessage(`Failed to open file: ${error}`);
+    }
+}
+// not use
+/*
+private removeNoise(html:string, pattern:string, removeTag = false, noiseStore:any = {}) {
+  let regex = new RegExp(pattern, 'gi');
+  let matches = [];
+  let match;
+
+  // Collect all matches with offset
+  while ((match = regex.exec(html)) !== null) {
+    const fullMatch = match[0];
+    const contentMatch = match[1] || match[0];
+    const index = match.index + (removeTag ? 0 : fullMatch.indexOf(contentMatch));
+
+    matches.push({
+      text: removeTag ? fullMatch : contentMatch,
+      index: index,
+      length: removeTag ? fullMatch.length : contentMatch.length
+    });
+  }
+
+  // Replace from end to avoid messing up offsets
+  for (let i = matches.length - 1; i >= 0; i--) {
+    const key = '___noise___' + String(Object.keys(noiseStore).length + 100).padStart(3, ' ');
+    const { text, index, length } = matches[i];
+    noiseStore[key] = text;
+    html = html.slice(0, index) + key + html.slice(index + length);
+  }
+
+  return html;
+}
+  */
+//not use
+/*
+private cleanNoise(htmlContent:string):string {
+        const noise = {};
+        htmlContent = this.removeNoise(htmlContent,'<!--[\\s\\S]*?-->', false, noise); 
+        htmlContent = this.removeNoise(htmlContent, '<!\\[CDATA\\[[\\s\\S]*?\\]\\]>', true, noise);   // CDATA
+        htmlContent = this.removeNoise(htmlContent, '<\\s*style[^>]*>[\\s\\S]*?<\\s* /\\s*style\\s*>', false, noise); // style fix space between * / before use
+        //htmlContent = this.removeNoise(htmlContent, '<\\s*script[^>]*>([\\s\\S]*?)<\\s* /\\s*script\\s*>', false, noise); // script same in this line also
+        //htmlContent = this.removeNoise(htmlContent, '<\\?(?:[\\s\\S]*?)\\?>', true, noise);           // PHP
+        //htmlContent = this.removeNoise(htmlContent, '\\{\\w[\\s\\S]*?\\}', true, noise);              // smarty
+
+        //return htmlContent;    
+//}
+*/
+    private getTagAttributesAtPosition(filePath: string, tagStartPos: number): any {
+        var t1 = this.readDocument(filePath);
+        // for match the charpos
+        //var htmlContent = this.cleanNoise(t1[0]); 
+        var htmlContent = t1[0]; 
+    //fs.writeFileSync("D:/test.html",htmlContent);
+        //const document = t1[1];
+    var attributes: any = {};
+   
+    attributes = this.getTagAttributes(htmlContent, tagStartPos);
+
+    return attributes[1];
+}
+
+    private async updateHtmlTagByPosition(
+    filePath: string,
+    tagStartPos: number,
+    updates: { [key: string]: string }
+    ){
+        try{
+        var v1 = this.readDocument(filePath);
+        const htmlContent = v1[0];
+        const document = v1[1];
+
+    // Find the end of the opening tag
+    var tag = this.getTagAttributes(htmlContent,tagStartPos);
+    if (tag[0] === ""){ return;}
+    var tagEndPos = tagStartPos + tag[0].length;
+    Object.entries(updates).forEach(([key, value]) => {
+        tag[1][key] = value;
+    });
+
+    var finalTag = tag[0].split(' ')[0];
+    for (const [key, value] of Object.entries(tag[1])) {
+        finalTag += ` ${key}="${value}"`;
+    }
+    finalTag += ">";
+    //vscode.window.showInformationMessage(finalTag);
+    // Reconstruct the HTML with updated tag
+    var str =
+        htmlContent.substring(0, tagStartPos) +
+        finalTag +
+        htmlContent.substring(tagEndPos + 1);
+        this.saveDocument1(filePath,str,document);
+
+        }catch(e){
+            console.log(e);
+        }
+}
+ 
+    private readDocument(filePath: string): [string, any] {
+        try {
+        const uri = vscode.Uri.file(filePath);
+        const document = vscode.workspace.textDocuments.find(doc => doc.uri.fsPath === uri.fsPath);
+        const content = document ? document.getText() : fs.readFileSync(filePath, 'utf8');
+        return [content,document];
+        } catch (error) {
+        vscode.window.showErrorMessage(`Error reading file: ${error instanceof Error ? error.message : String(error)}`);
+        }
+        return ["",null];
+    }
+    private async saveDocument1(filePath: string, updatedContent: string,document?: vscode.TextDocument) {
+        try {
+        // Apply changes
+        if (document) {
+            const edit = new vscode.WorkspaceEdit();
+            edit.replace(document.uri, 
+                new vscode.Range(0, 0, document.lineCount, 0), 
+                updatedContent);
+            await vscode.workspace.applyEdit(edit);
+            await document.save();
+        } else {
+            fs.writeFileSync(filePath, updatedContent, 'utf8');
+        }
+
+        } catch (error) {
+        vscode.window.showErrorMessage(`Error saving file: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }
+    private sendToWV(evt: string,evtp: string = "",bdata:any = {}) {
+        this._panel.webview.postMessage({ 
+        command: "sendToWV", 
+        ctrl: '', 
+        evt: evt,
+        evtp: evtp,
+        bdata: bdata
+        });
+    }
+    private handleWebPanelMessage(message: any) {
+        let self = this;
+        switch (message.evt) {
+            case 'init':
+                break;
+            case 'openFile':
+                this.openOrFocusFile(message.evtp);
+                break;
+            case 'tagclick':
+                var data:any = {};
+                data["info"] = {"tagName":"HtmlTag","phpclass":"HtmlTag","selfclosed":true,"charpos": message.evtp,"tempfile":message.bdata.tempfname};
+                //data["attr"] = {};
+                data["attr"] = self.getTagAttributesAtPosition(message.bdata.tempfname, message.evtp);
+                self.sendToWV("compclick",data,{});
+                break;
+            case 'compclick':
+                var compcode = "<" + message.bdata.info.tagName + " " + Object.entries(message.bdata.attr).map(([k, v]) => `${k}="${v}"`).join(' ');
+                if(message.bdata.info.selfclosed === true){
+                    compcode += " />";
+                }else{
+                    compcode += "></" + message.bdata.info.tagName + ">";
+                }
+                //vscode.window.showInformationMessage(compcode);
+                var tagid = message.evtp;
+                self.runPhpScriptTimeLimit(self._executablePath, ['-f', self._context.asAbsolutePath("scripts/proj_comp_prop.php"), '--', self._workspaceFolder,compcode,tagid], function (str: string) {
+                    //console.log(str);
+                    var a2 = JSON.parse(str);
+                    var a1:any = {};
+                    Object.keys(a2).forEach(function (key) {
+                        if(key.substring(0,5) !== "comp#"){
+                            a1[key] = a2[key];
+                        }
+                    });
+                    self.sendToWV("compclick",message.bdata,a1);
+                    //vscode.window.showInformationMessage("Comp Prop Updated!");
+                });
+
+                break;
+            case 'updateatr':
+                if(message.bdata.phpclass === "HtmlTag"){
+                    //vscode.window.showInformationMessage(message.bdata.tempfile);
+                this.updateHtmlTagByPosition(message.bdata.tempfile, message.bdata.charpos, message.evtp);
+                }else{
+                this.updateHtmlTagByPosition(message.bdata.tempfile, message.bdata.charpos, message.evtp);
+                //this.updateHtmlTagInFile(message.bdata.tempfile, message.bdata.id, message.evtp);
+                }
+                this.sendToWV("reload");
+                break;
+            default:
+                vscode.window.showErrorMessage(`WebView Error: ${message.evt}`);
+                console.error(message.evt);
+                break;
+        }
+    }
     public projView() {
         if (!this._panelStatus) {
             //this._panel = vscode.window
@@ -155,40 +388,123 @@ export class CodeManager implements vscode.Disposable {
                 vscode.ViewColumn.One,
                 {
                     enableScripts: true,
-                    retainContextWhenHidden: true
+                    retainContextWhenHidden: true,
+                    enableForms: true
+                    
                 }
             );
-            /*
-            this._panel.webview.onDidReceiveMessage(message => {
-                //messageHandler(message, serverState, panel);
-            });
-            */
+            
+            this._panel.webview.onDidReceiveMessage(message => this.handleWebPanelMessage(message), null, this._context.subscriptions);
+            
 
             this._panel.onDidDispose(() => {
                 //stopServer();
                 this._panelStatus = false;
             }, null, this._context.subscriptions);
 
-            this._panelStatus = true;
+            //this._panelStatus = true;
         } else {
             //this._panel.webview.
             //vscode.
         }
         const editor = vscode.window.activeTextEditor;
         const self = this;
-        if (editor) {
+        if (!this._panelStatus && editor) {
+            self._panelStatus = true; // open once
             editor.document.save().then(function () {
+                
+                /*
                 self.runPhpScriptTimeLimit(self._executablePath, ['-f', self._context.asAbsolutePath("scripts/proj_view.php"), '--', editor.document.fileName, self._workspaceFolder], function (str: string) {
+                    str = self.fixResourcePaths(str, self._cwd, self._panel.webview); //str;
+                    console.log(str);
                     self._panel.webview.html = str;
-                    vscode.window.showInformationMessage("Done Phar Package!");
+                    //vscode.window.showInformationMessage("Done Phar Package!");
                 });
+                */
+            if (fs.existsSync(self._sphpServerExecutablePath)){
+
+            if(self.isFileExt(editor,'.front,.temp')){
+               self.startServerDesign().then(function () {
+                let vall:any = {};
+                let srchost = "http://" + self._sphpServer.host + ":" + self._sphpServer.port;
+                let url = srchost + "/index.html?proj=" + self._workspaceFolder + "&file=" + editor.document.fileName + "&type=front";
+                console.log(url);
+                const webviewOrigin = self._panel.webview.asWebviewUri(vscode.Uri.file('')).toString();
+                const webviewHost = webviewOrigin.split('/').slice(0, 3).join('/');
+                vall['url'] = url;
+                vall['srchost'] = srchost;
+                vall['webviewHost'] = webviewHost;
+                vall['webviewOrigin'] = webviewOrigin;
+                // open dev tool
+                //setTimeout(() => { vscode.commands.executeCommand('workbench.action.webview.openDeveloperTools');}, 1000);
+
+                self._panel.webview.html = self.renderTemplate(vall);
+               });
+            }else{
+               self._panel.webview.html = 'Please Select a Front File!'; 
+            }
+        }else{
+               self._panel.webview.html = 'Please Install SartajPHP Desktop Runtime! <a href="https://www.sartajphp.com/index-info-downloads.html">https://www.sartajphp.com/index-info-downloads.html</a>'; 
+            }
             });
         } else {
+            if (this._panelStatus) {
+                this._panel.reveal(vscode.ViewColumn.One, true);
+            }else{
             vscode.window.showInformationMessage("No code found or selected.");
+            }
             return;
         }
 
     }
+
+    public treeItemCBDrag(dragData: any){
+        var self = this;
+        if (this._panelStatus) {
+            //vscode.window.showInformationMessage("Drag Drop!");
+            // only first item pick
+            let v1 = {
+                "parent": dragData[0].parent,
+                "name": dragData[0].name,
+                "bc": this.codeBlocks[dragData[0].parent][1][dragData[0].name]["block_code"]
+            };
+            //let codeb = this.codeBlocks[dragData.parent][1][dragData.name]["block_code"];
+            self.sendToWV("dragdrop","",v1);
+        }
+    }
+private renderTemplate(data: Record<string, any>): string {
+    const htmlPath = path.join(this._context.extensionPath, 'src', 'webview', 'index.html');
+    let html = fs.readFileSync(htmlPath, 'utf-8');
+    
+    // Replace placeholders with actual values
+    for (const [key, value] of Object.entries(data)) {
+        html = html.replace(new RegExp(`\\$\\{\\{${key}\\}\\}`, 'g'), value);
+    }
+    
+    return html;
+}
+
+    private async startServerDesign() {
+        if(this._sphpServer === null){
+        this._sphpServer = new SphpServerRun(this._sphpServerExecutablePath);
+        //await this._sphpServer.runServer("127.0.0.1",0,0,this._context.asAbsolutePath("scripts/projdes/app.sphp"));
+        await this._sphpServer.runServer("127.0.0.1",0,0,this._workspaceFolder,this._context.asAbsolutePath("scripts/projdes/editctrl.php"));
+        }
+    }
+// Rewrite all local resource links
+ fixResourcePaths(html: string, baseDir: string, webview: vscode.Webview):string {
+    return html.replace(/(src|href)=["']([^"']+)["']/g, (match, attr, relativePath) => {
+        // Ignore external URLs
+        if (relativePath.startsWith("http") || relativePath.startsWith("data:")) {
+          return match;
+        }
+    
+        const fullPath = path.join(baseDir, relativePath);
+        const uri = webview.asWebviewUri(vscode.Uri.file(fullPath));
+        return `${attr}="${uri}"`;
+      });
+    }
+
 /*
     private async array2TreeItems(sql1: any, rows2: []) {
         let rows: any = {};
@@ -216,11 +532,12 @@ export class CodeManager implements vscode.Disposable {
     }
     public treeItemClick(item: TreeItem){
         const editor = vscode.window.activeTextEditor;
-        //console.log(this.codeBlocks);
-        if(editor){
+        //console.log(" item click " + item.parentb + " " + item.atype + " " + item.aname);
+        if(editor && item.atype === 'a'){
             const snippet = new vscode.SnippetString();
             let codeb = this.codeBlocks[item.parentb][1][item.aname]["block_code"];
             snippet.value = codeb;
+            //console.log(codeb);
             //snippet.appendTabstop();
             editor.insertSnippet(snippet);           
         }
@@ -244,52 +561,65 @@ export class CodeManager implements vscode.Disposable {
         await this.genBlocksTree2();
     }
     private async genBlocksTree2(){
-        const tviewM = new TviewM();
-        const dp1: any = tviewM.getBlocks(this.codeBlocks,this._context);
+        if(!this._dp2){
+            this._dp2 = new TviewM().getBlocks(this.codeBlocks, this._context);
+            this._dp2.onDragEvent = this.treeItemCBDrag.bind(this);
+        }else{
+            this._dp2.updateData(this.codeBlocks,this._context,'a'); 
+        }
         //const tView = vscode.window.registerTreeDataProvider("SartajPHP",codeManager.addT());
-        const tView = vscode.window.createTreeView("sartajphp-blocks",
+        if(!this._tView2){
+            this._tView2 = vscode.window.createTreeView("sartajphp-blocks",
             {
-                treeDataProvider: dp1,
+                treeDataProvider: this._dp2,
                 canSelectMany: false,
-                dragAndDropController: dp1
+                dragAndDropController: this._dp2
             });
-            this._context.subscriptions.push(tView);
-
+            this._context.subscriptions.push(this._tView2);
+        }
     }
     private async genCompPropTree(comprop:any){
-        const tviewM = new TviewM();
-        const dp1: any = tviewM.getDbView(comprop,this._context);
+        if(!this._dp1){
+            this._dp1 = new TviewM().getDbView(comprop, this._context);
+        }else{
+            this._dp1.updateData(comprop,this._context,'b'); // b for non clickable
+        }
+        if(!this._tView1){
         //const tView = vscode.window.registerTreeDataProvider("SartajPHP",codeManager.addT());
-        const tView = vscode.window.createTreeView("sartajphp-comp",
+        this._tView1 = vscode.window.createTreeView("sartajphp-comp",
             {
-                treeDataProvider: dp1,
+                treeDataProvider: this._dp1,
                 canSelectMany: false,
-                dragAndDropController: dp1
+                dragAndDropController: this._dp1
             });
-            this._context.subscriptions.push(tView);
-
+            this._context.subscriptions.push(this._tView1);
+        }
     }
 
-    private getCompProp(tagid: string,compcode: string) {
+    public getCompProp(tagid: string,compcode: string,callback: (strar:any) => void){ 
         const self = this;
         self.runPhpScriptTimeLimit(self._executablePath, ['-f', self._context.asAbsolutePath("scripts/proj_comp_prop.php"), '--', self._workspaceFolder,compcode,tagid], function (str: string) {
             //console.log(str);
-            self.genCompPropTree(JSON.parse(str));
+            //self.genCompPropTree(JSON.parse(str));
+            callback(JSON.parse(str));
             //vscode.window.showInformationMessage("Comp Prop Updated!");
         });
     }
 
-    private findTag(str1:string, pos:number = 0): string{
+    public findTag(str1:string, pos:number = 0): string{
         var char = "";
         var start = -1;
         var end = -1;
-        for (let index = pos; index < str1.length; index--) {
+        if(pos > 0) {
+            pos -= 1;
+        }
+        for (let index = pos; index >= 0 && index < str1.length; index--) {
             char = str1[index];
             if(char === '<'){
                 start = index;
                 break;
             } 
-            if(char === '>') {
+            if(char === '>'){ 
                 break;
             }                
         }
@@ -342,42 +672,63 @@ export class CodeManager implements vscode.Disposable {
         }
         return false;
     }
+    public getTagAttributes(tagline:string, pos:number = 0): any{
+        let tagar:any = {};
+        var tag = this.findTag(tagline,pos);
+        if (tag !== "") {
+            const attrRegex = /([\w:-]+)\s*=\s*("(?:\\.|[^"])*"|'(?:\\.|[^'])*')/g;
+            let match: RegExpExecArray | null;
 
+            while ((match = attrRegex.exec(tag)) !== null) {
+                const key = match[1];
+                // Remove surrounding quotes from value
+                const rawValue = match[2];
+                const value = rawValue.substring(1, rawValue.length - 1);
+                tagar[key] = value;
+            }
+              return [tag,tagar];
+        }else{
+            return ["",{}];                
+        }
+        
+    }
+    public getCompTag(tagline:string, pos:number = 0): any{
+            let tagar:any = {};
+            var tag = this.getTagAttributes(tagline,pos);
+            if (tag[0] !== "") {
+                if(tagar['runat'] === 'server' && tagar['id'] !== ''){
+                    return tag;                
+                }else{
+                    return ["",{}];                
+                }
+            }else{
+                return ["",{}];                
+            }
+    }
     public async fillCompProp(d: vscode.TextEditorSelectionChangeEvent){
+        let self = this;
         let editor = vscode.window.activeTextEditor;
         //ONLY FRONT FILE EXTENSION
         if(editor && this.isFileExt(editor,'.front,.temp')){
             var doc: vscode.TextDocument = d.textEditor.document;
-            var str1 = doc.getText();
-            var tag = this.findTag(str1,doc.offsetAt(editor.selection.active));
-            if (tag !== "") {
-                let taga = tag.split(' ');
-                let blnComp = false;
-                //let attributes:any = {};
-                //let tagName = taga[0];
-                let tagid = "";
-                for(let index=1; index<taga.length; index++){
-                    let v1 = taga[index].split('=');
-                    if(v1[0] === 'runat'){
-                        blnComp = true;
-                    }
-                    if(v1[0] === 'id'){
-                        tagid = v1[1].substring(1,v1[1].length - 1);
-                    }
-                    /*
-                    if(v1.length > 1){
-                        attributes[v1[0]] = v1[1];
-                    }else{
-                        attributes[v1[0]] = '';
-                    }
-                    */
-                }
+            //var str1 = doc.lineAt(editor.selection.active).text;
+            var pos = doc.offsetAt(editor.selection.active);
+            var dif = 200;
+            if(pos < 200){
+                dif = pos;
+            }
+            var str1 = doc.getText().substring(pos-dif,pos+200);
+            var tag = this.getCompTag(str1,dif);
+            //vscode.window.showInformationMessage("N " + tag[0]);
+
+            if (tag[0] !== "") {
                 // if component then fill properties
-                if(blnComp){
-                    this.getCompProp(tagid,'<' + tag + '>');
-                    //console.log(tag);
-                    //console.log(attributes);
-                }
+                    this.getCompProp(tag[1]['id'],'<' + tag[0] + '>',function(ar1:any){
+                        self.genCompPropTree(ar1);
+                    });
+                    //console.log(tag[0]);
+                    //console.log(tag[1]);
+                
             }
         }
     }
@@ -388,8 +739,8 @@ export class CodeManager implements vscode.Disposable {
         const childProcess = spawn(filepath, param);
         childProcess.stderr.on('data', (chunk: Buffer) => {
             const str = chunk.toString();
-            console.log('SartajPHP Lib Error:', str);
-            this._client.outputChannel.appendLine(str);
+            //console.error('SartajPHP Lib Error:', str);
+            this._outputerror.appendLine(str);
         });
         childProcess.stdout.on('data', (chunk: Buffer) => {
             //console.log('SartajPHP Lib:', chunk + '');
@@ -397,11 +748,11 @@ export class CodeManager implements vscode.Disposable {
         });
         childProcess.on('exit', (code, signal) => {
             callback(strout);
-            this._client.outputChannel.appendLine(
+            this._outputerror.appendLine(
                 `SartajPHP Lib ` + (signal ? `from signal ${signal}` : `with exit code ${code}`)
             );
             if (code !== 0) {
-                this._client.outputChannel.show();
+                this._outputerror.show();
             }
         });
 
@@ -411,18 +762,18 @@ export class CodeManager implements vscode.Disposable {
         const childProcess = spawn(filepath, param);
         childProcess.stderr.on('data', (chunk: Buffer) => {
             const str = chunk.toString();
-            console.log('SartajPHP Lib Error:', str);
-            this._client.outputChannel.appendLine(str);
+            //console.error('SartajPHP Lib Error:', str);
+            this._outputerror.appendLine(str);
         });
         childProcess.stdout.on('data', (chunk: Buffer) => {
             console.log('SartajPHP Lib:', chunk + '');
         });
         childProcess.on('exit', (code, signal) => {
-            this._client.outputChannel.appendLine(
+            this._outputerror.appendLine(
                 `SartajPHP Lib ` + (signal ? `from signal ${signal}` : `with exit code ${code}`)
             );
             if (code !== 0) {
-                this._client.outputChannel.show();
+                this._outputerror.show();
             }
         });
 
@@ -461,14 +812,13 @@ export class CodeManager implements vscode.Disposable {
     }
 
     private initialize(): void {
+        this.initvar();
+    }
+    private initvar():void{
         this._workspaceFolder = this.getWorkspaceFolder();
         this._cwd = this._workspaceFolder;
-        if (this._cwd) {
-            return;
-        }
-        this._cwd = TMPDIR;
+        //this._cwd = TMPDIR;
     }
-
 
     private getWorkspaceFolder(): string {
         if (vscode.workspace.workspaceFolders) {
@@ -501,6 +851,9 @@ export class CodeManager implements vscode.Disposable {
     }
 
     private executeCommand(fileExtension: string) {
+        if(this._cwd === undefined){
+            this.initvar();
+        }
         let command: string = this._executablePath + " -f " + this._cwd + "/start.php -- --ctrl index";
         //check sphp file exist
         if (fs.existsSync(this._cwd + "/app.sphp") && fileExtension !== ".phar") {

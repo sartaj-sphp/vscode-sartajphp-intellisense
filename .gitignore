@@ -10,3 +10,4 @@ sqlitesphp.ts
 tdataprovider.ts
 treeitem.ts
 dropprovider.ts
+codeManager.ts

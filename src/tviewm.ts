@@ -9,7 +9,7 @@ export class TviewM implements vscode.Disposable {
     }
 
     public getDbView(rows:any,context: vscode.ExtensionContext) : vscode.TreeDataProvider<any> {
-        return new TdataProvider(rows,context);
+        return new TdataProvider(rows,context,'b');
     }
 
     public dispose() {
